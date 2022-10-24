@@ -3,19 +3,16 @@ package org.cs461.GeneticAlgorithm.components;
 import java.util.ArrayList;
 
 public class Course {
-    public ArrayList<String> preferredInstructors;
-    public ArrayList<String> backUpInstructors;
-    public int expectedEnrollment;
     public String courseName;
-
-    // unsure about room still and if it is relevant here?
+    public String instructor;
     public Room room;
+    public int time;
 
 
-    public Course(ArrayList<String> preferredInstructors, ArrayList<String> backUpInstructors, int expectedEnrollment, String courseName) {
-        this.preferredInstructors = preferredInstructors;
-        this.backUpInstructors = backUpInstructors;
-        this.expectedEnrollment = expectedEnrollment;
+    public Course(String courseName, String instructor, String building, int roomNumber, int roomSize, int time) {
         this.courseName = courseName;
+        this.instructor = instructor;
+        this.room = new Room(building, roomNumber, roomSize);
+        this.time = time;
     }
 }

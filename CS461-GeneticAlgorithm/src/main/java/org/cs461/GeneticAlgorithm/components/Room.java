@@ -4,9 +4,10 @@ public class Room {
     public String bulding;
     public int roomNumber;
     public int roomSize;
-    public Time timeSlots;
 
-    public Room() {
-        timeSlots = new Time();
+    public Room(String building, int roomNumber, int roomSize) {
+        this.bulding = building;
+        this.roomNumber = roomNumber;
+        this.roomSize = roomSize;
     }
 }
