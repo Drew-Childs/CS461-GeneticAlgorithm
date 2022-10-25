@@ -1,4 +1,4 @@
-package org.cs461.GeneticAlgorithm.components;
+package org.cs461.GeneticAlgorithm.Components;
 
 import java.util.Map;
 
