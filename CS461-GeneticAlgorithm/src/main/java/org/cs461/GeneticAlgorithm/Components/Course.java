@@ -19,5 +19,6 @@ public class Course {
         this.room = new Room(building, roomNumber, roomSize);
         this.time = time;
         this.expectedEnrollment = expectedEnrollment;
+        this.fitnessScore = 0;
     }
 }

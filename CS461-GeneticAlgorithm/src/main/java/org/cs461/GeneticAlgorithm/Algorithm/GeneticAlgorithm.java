@@ -7,7 +7,6 @@ import org.cs461.GeneticAlgorithm.Components.Time;
 import org.cs461.GeneticAlgorithm.Enums.Building;
 import org.cs461.GeneticAlgorithm.Enums.ClassName;
 import org.cs461.GeneticAlgorithm.Enums.Professor;
-import org.w3c.dom.html.HTMLAreaElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ public class GeneticAlgorithm {
     // may need to create overloaded equals function so I can see if a given room is equal
     public static Map<Room, Time> roomSchedule;
 
-    public static ArrayList<Course> courseGeneration;
+    public static ArrayList<ArrayList<Course>> schedulePopulation;
     private Fitness fitness;
 
 
@@ -37,7 +36,7 @@ public class GeneticAlgorithm {
 
         GeneticAlgorithm.courseProfessorPreferences = new HashMap<>();
         GeneticAlgorithm.roomSchedule = new HashMap<>();
-        GeneticAlgorithm.courseGeneration = new ArrayList<>();
+        GeneticAlgorithm.schedulePopulation = new ArrayList<>();
 
         fitness = new Fitness();
     }
@@ -124,6 +123,17 @@ public class GeneticAlgorithm {
         }
 
         // generate first generation
+        for(int i = 0; i < 500; i++) {
+            ArrayList<Course> schedule;
+
+            for(/*course in course list*/) {
+                // randomly assign instructor, room, and time
+                // make sure expected enrollment is carried over
+            }
+            // add back to schedulePopulation
+        }
+
+        // TODO: verify courses are added to schedulePopulation correctly and are truly random
     }
 
     public void populateCourseProfessorPreferences() {

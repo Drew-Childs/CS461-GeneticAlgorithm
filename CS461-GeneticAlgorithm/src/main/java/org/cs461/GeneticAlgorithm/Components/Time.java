@@ -1,11 +1,14 @@
 package org.cs461.GeneticAlgorithm.Components;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Time {
     public Map<Integer, Boolean> times;
 
     public Time() {
+        times = new HashMap<>();
+
         times.put(10, true);
         times.put(11, true);
         times.put(12, true);
