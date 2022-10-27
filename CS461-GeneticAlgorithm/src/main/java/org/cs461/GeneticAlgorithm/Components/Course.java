@@ -10,7 +10,6 @@ public class Course {
     public Room room;
     public Integer time;
     public Integer expectedEnrollment;
-    public double fitnessScore;
 
 
     public Course(ClassName courseName, Professor instructor, Building building, Integer roomNumber, Integer roomSize, Integer time, Integer expectedEnrollment) {
@@ -19,6 +18,5 @@ public class Course {
         this.room = new Room(building, roomNumber, roomSize);
         this.time = time;
         this.expectedEnrollment = expectedEnrollment;
-        this.fitnessScore = 0;
     }
 }

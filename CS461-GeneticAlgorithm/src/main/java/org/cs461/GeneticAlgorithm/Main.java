@@ -7,6 +7,6 @@ public class Main {
         System.out.println("Hello world!");
 
         GeneticAlgorithm testing = new GeneticAlgorithm();
-        testing.setup();
+        testing.execute();
     }
 }
