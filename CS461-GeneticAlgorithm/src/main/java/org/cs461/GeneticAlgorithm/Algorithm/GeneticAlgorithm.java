@@ -20,7 +20,10 @@ public class GeneticAlgorithm {
     public static Map<ClassName, Preferences> courseProfessorPreferences;
 
     public static Map<ArrayList<Course>, Double> schedulePopulation;
+    public static Map<Integer, Map<ArrayList<Course>, Double>> populationGenerations;
+    private static Integer generation;
     private Fitness fitness;
+    private final Double mutationRate = 0.01;
 
 
     public GeneticAlgorithm() {
@@ -30,8 +33,11 @@ public class GeneticAlgorithm {
 
         courseProfessorPreferences = new HashMap<>();
         schedulePopulation = new HashMap<>();
+        populationGenerations = new HashMap<>();
 
         fitness = new Fitness();
+
+        generation = 0;
     }
 
 
@@ -42,6 +48,8 @@ public class GeneticAlgorithm {
             schedule.setValue(fitness.calcFitness(schedule.getKey()));
         }
 
+        crossover();
+
         // iterate until at least 100 generations and fitness target is met
         //     calculate fitness of each score
         //     perform crossover
@@ -50,18 +58,49 @@ public class GeneticAlgorithm {
     }
 
     public void crossover() {
-        // softmax normalization
-        // sort results
-        // create cdf
-        // choose members that are above random threshold
+        Double fitnessSum = 0.0;
+        LinkedHashMap<ArrayList<Course>, Double> softmax = new LinkedHashMap<>();
+        LinkedHashMap<ArrayList<Course>, Double> cdf = new LinkedHashMap<>();
 
-        // reproduce members that pass the vibe check
-        // pass each member to mutate function
+        populationGenerations.put(generation, schedulePopulation);
+        generation += 1;
+
+        schedulePopulation.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEachOrdered(schedule -> softmax.put(schedule.getKey(), Math.exp(schedule.getValue())));
+
+        for (Map.Entry<ArrayList<Course>, Double> schedule : softmax.entrySet()) {
+            fitnessSum += schedule.getValue();
+        }
+
+        for (Map.Entry<ArrayList<Course>, Double> schedule : softmax.entrySet()) {
+            cdf.put(schedule.getKey(), schedule.getValue() / fitnessSum);
+        }
+
+        // TODO: figure out how many to reproduce after each generation. Do you only accept a certain amount and generate new ones to get back up to the 500 threshold?
+
+        schedulePopulation = new HashMap<>();
+        boolean alternate = false;
+
+        ArrayList<Course> first = new ArrayList<>();
+        ArrayList<Course> second = new ArrayList<>();
+
+        for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
+            // TODO: figure out how you're splitting each generation - whether that's by classes themselves or by classes and attributes of that class
+
+            if (alternate) {
+                // store data in first half of first, and second half of second
+            }
+            else {
+                // store data in second half of first, and first half of second
+                // pass mutation vibe check, if not, pass to mutate
+                // push children to schedule population
+            }
+
+            alternate = !alternate;
+        }
     }
 
     public void mutate() {
-        // generate random number to mutate off of
-        // modify members accordingly
+        // TODO: if parent is selected for mutation, do I only modify one value? is this value only one class? do I completely randomize elements of that class?
     }
 
     public void setup() {
