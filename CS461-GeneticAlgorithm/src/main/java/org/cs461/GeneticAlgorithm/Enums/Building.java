@@ -6,5 +6,5 @@ public enum Building {
     Royall,
     Haag,
     MNLC,
-    Bloch,
+    Bloch
 }

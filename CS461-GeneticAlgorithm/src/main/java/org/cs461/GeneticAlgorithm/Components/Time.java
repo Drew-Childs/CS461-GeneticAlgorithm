@@ -10,11 +10,11 @@ public class Time {
     public Time() {
         times = new HashMap<>();
 
-        times.put(10, new ArrayList<>());
-        times.put(11, new ArrayList<>());
-        times.put(12, new ArrayList<>());
         times.put(1, new ArrayList<>());
         times.put(2, new ArrayList<>());
         times.put(3, new ArrayList<>());
+        times.put(4, new ArrayList<>());
+        times.put(5, new ArrayList<>());
+        times.put(6, new ArrayList<>());
     }
 }

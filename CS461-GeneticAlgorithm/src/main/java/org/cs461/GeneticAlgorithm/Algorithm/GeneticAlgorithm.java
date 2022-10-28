@@ -19,10 +19,6 @@ public class GeneticAlgorithm {
     // master list of preferences
     public static Map<ClassName, Preferences> courseProfessorPreferences;
 
-    // may need to create overloaded equals function so I can see if a given room is equal
-    public static Map<Room, Time> roomSchedule;
-    public static Map<Professor, Time> professorSchedule;
-
     public static Map<ArrayList<Course>, Double> schedulePopulation;
     private Fitness fitness;
 
@@ -33,8 +29,6 @@ public class GeneticAlgorithm {
         professorMasterList = new ArrayList<>();
 
         courseProfessorPreferences = new HashMap<>();
-        roomSchedule = new HashMap<>();
-        professorSchedule = new HashMap<>();
         schedulePopulation = new HashMap<>();
 
         fitness = new Fitness();
@@ -120,19 +114,9 @@ public class GeneticAlgorithm {
         courseProfessorPreferences.put(ClassName.CS449, new Preferences(Arrays.asList(Professor.Xu, Professor.Song, Professor.Shah), Arrays.asList(Professor.Zein_el_Din, Professor.Uddin)));
         courseProfessorPreferences.put(ClassName.CS451, new Preferences(Arrays.asList(Professor.Xu, Professor.Song, Professor.Shah), Arrays.asList(Professor.Zein_el_Din, Professor.Uddin, Professor.Nait_Adbesselam, Professor.Hare)));
 
-        // populating roomSchedule list
-        for (Room room : roomMasterList) {
-            roomSchedule.put(room, new Time());
-        }
-
-        // populating instructorSchedule list
-        for (Professor professor : professorMasterList) {
-            professorSchedule.put(professor, new Time());
-        }
-
         // generate first generation
         ArrayList<Integer> times = new ArrayList<>();
-        times.addAll(Arrays.asList(10, 11, 12, 1, 2, 3));
+        times.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
         Random rand = new Random();
 
         for (int i = 0; i < 500; i++) {
@@ -141,7 +125,7 @@ public class GeneticAlgorithm {
             for (Course course : courseMasterList) {
                 ClassName className = course.courseName;
                 Professor professor = professorMasterList.get(rand.nextInt(professorMasterList.size()));
-                Integer time = 10;
+                Integer time = times.get(rand.nextInt(times.size()));
                 Integer expectedEnrollment = course.expectedEnrollment;
 
                 Integer buildingSeed = rand.nextInt(roomMasterList.size());
