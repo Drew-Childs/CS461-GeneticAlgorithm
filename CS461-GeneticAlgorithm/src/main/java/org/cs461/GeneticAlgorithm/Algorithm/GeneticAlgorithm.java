@@ -3,7 +3,6 @@ package org.cs461.GeneticAlgorithm.Algorithm;
 import org.cs461.GeneticAlgorithm.Components.Course;
 import org.cs461.GeneticAlgorithm.Components.Preferences;
 import org.cs461.GeneticAlgorithm.Components.Room;
-import org.cs461.GeneticAlgorithm.Components.Time;
 import org.cs461.GeneticAlgorithm.Enums.Building;
 import org.cs461.GeneticAlgorithm.Enums.ClassName;
 import org.cs461.GeneticAlgorithm.Enums.Professor;
@@ -20,10 +19,10 @@ public class GeneticAlgorithm {
     public static Map<ClassName, Preferences> courseProfessorPreferences;
 
     public static Map<ArrayList<Course>, Double> schedulePopulation;
-    public static Map<Integer, Map<ArrayList<Course>, Double>> populationGenerations;
+    public static Map<Integer, Double> generationFitness;
     private static Integer generation;
     private Fitness fitness;
-    private final Double mutationRate = 0.01;
+    private static Random rand = new Random();
 
 
     public GeneticAlgorithm() {
@@ -33,7 +32,7 @@ public class GeneticAlgorithm {
 
         courseProfessorPreferences = new HashMap<>();
         schedulePopulation = new HashMap<>();
-        populationGenerations = new HashMap<>();
+        generationFitness = new HashMap<>();
 
         fitness = new Fitness();
 
@@ -63,9 +62,6 @@ public class GeneticAlgorithm {
         LinkedHashMap<ArrayList<Course>, Double> softmax = new LinkedHashMap<>();
         LinkedHashMap<ArrayList<Course>, Double> cdf = new LinkedHashMap<>();
 
-        populationGenerations.put(generation, schedulePopulation);
-        generation += 1;
-
         schedulePopulation.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEachOrdered(schedule -> softmax.put(schedule.getKey(), Math.exp(schedule.getValue())));
 
         for (Map.Entry<ArrayList<Course>, Double> schedule : softmax.entrySet()) {
@@ -77,9 +73,12 @@ public class GeneticAlgorithm {
             previous += schedule.getValue() / fitnessSum;
         }
 
-        Random rand = new Random();
+        generationFitness.put(generation, fitnessSum / schedulePopulation.size());
+        generation += 1;
+
         ArrayList<ArrayList<Course>> parents = new ArrayList<>();
-        ArrayList<ArrayList<Course>> children = new ArrayList<>();
+        ArrayList<Course> childOne = new ArrayList<>();
+        ArrayList<Course> childTwo = new ArrayList<>();
         schedulePopulation = new HashMap<>();
 
         for (int i = 0; i < 250; i++) {
@@ -96,20 +95,45 @@ public class GeneticAlgorithm {
             }
 
             Integer split = rand.nextInt(0, 11);
-            children.put();
-            // go ahead and place the two split parents in the child
-            // figure out if you need to mutate any of them
 
-            // add them to schedulePopulation
+            childOne.addAll(parents.get(0).subList(0, split));
+            childOne.addAll(parents.get(1).subList(split, 11));
+
+            childTwo.addAll(parents.get(1).subList(0, split));
+            childTwo.addAll(parents.get(0).subList(split, 11));
+
+            schedulePopulation.put(mutate(childOne), 0.0);
+            schedulePopulation.put(mutate(childTwo), 0.0);
 
             parents.clear();
+            childOne.clear();
+            childTwo.clear();
         }
 
         // reset any data structures?
     }
 
-    public void mutate() {
-        // TODO: if parent is selected for mutation, do I only modify one value? is this value only one class? do I completely randomize elements of that class?
+    public ArrayList<Course> mutate(ArrayList<Course> child) {
+        if (rand.nextInt(1, 100) == 1) {
+            Integer index = rand.nextInt(0, 11);
+            ArrayList<Integer> times = new ArrayList<>();
+            times.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
+
+            ClassName className = child.get(index).courseName;
+            Professor professor = professorMasterList.get(rand.nextInt(professorMasterList.size()));
+            Integer time = times.get(rand.nextInt(times.size()));
+            Integer expectedEnrollment = child.get(index).expectedEnrollment;
+
+            Integer buildingSeed = rand.nextInt(roomMasterList.size());
+            Building building = roomMasterList.get(buildingSeed).bulding;
+            Integer roomNumber = roomMasterList.get(buildingSeed).roomNumber;
+            Integer roomSize = roomMasterList.get(buildingSeed).roomSize;
+
+
+            child.set(index, new Course(className, professor, building, roomNumber, roomSize, time, expectedEnrollment));
+        }
+
+        return child;
     }
 
     public void setup() {
@@ -165,7 +189,6 @@ public class GeneticAlgorithm {
         // generate first generation
         ArrayList<Integer> times = new ArrayList<>();
         times.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
-        Random rand = new Random();
 
         for (int i = 0; i < 500; i++) {
             ArrayList<Course> schedule = new ArrayList<>();
