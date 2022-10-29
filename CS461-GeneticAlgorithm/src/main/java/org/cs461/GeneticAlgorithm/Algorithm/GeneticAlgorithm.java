@@ -59,6 +59,7 @@ public class GeneticAlgorithm {
 
     public void crossover() {
         Double fitnessSum = 0.0;
+        Double previous = 0.0;
         LinkedHashMap<ArrayList<Course>, Double> softmax = new LinkedHashMap<>();
         LinkedHashMap<ArrayList<Course>, Double> cdf = new LinkedHashMap<>();
 
@@ -72,31 +73,39 @@ public class GeneticAlgorithm {
         }
 
         for (Map.Entry<ArrayList<Course>, Double> schedule : softmax.entrySet()) {
-            cdf.put(schedule.getKey(), schedule.getValue() / fitnessSum);
+            cdf.put(schedule.getKey(), (schedule.getValue() / fitnessSum) + previous);
+            previous += schedule.getValue() / fitnessSum;
         }
 
-        // TODO: figure out how many to reproduce after each generation. Do you only accept a certain amount and generate new ones to get back up to the 500 threshold?
-
+        Random rand = new Random();
+        ArrayList<ArrayList<Course>> parents = new ArrayList<>();
+        ArrayList<ArrayList<Course>> children = new ArrayList<>();
         schedulePopulation = new HashMap<>();
-        boolean alternate = false;
 
-        ArrayList<Course> first = new ArrayList<>();
-        ArrayList<Course> second = new ArrayList<>();
+        for (int i = 0; i < 250; i++) {
+            for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
+                Double percentile = rand.nextDouble(0, 1);
 
-        for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
-            // TODO: figure out how you're splitting each generation - whether that's by classes themselves or by classes and attributes of that class
+                if (schedule.getValue() > percentile) {
+                    parents.add(schedule.getKey());
+                }
 
-            if (alternate) {
-                // store data in first half of first, and second half of second
-            }
-            else {
-                // store data in second half of first, and first half of second
-                // pass mutation vibe check, if not, pass to mutate
-                // push children to schedule population
+                if (parents.size() == 2) {
+                    break;
+                }
             }
 
-            alternate = !alternate;
+            Integer split = rand.nextInt(0, 11);
+            children.put();
+            // go ahead and place the two split parents in the child
+            // figure out if you need to mutate any of them
+
+            // add them to schedulePopulation
+
+            parents.clear();
         }
+
+        // reset any data structures?
     }
 
     public void mutate() {
