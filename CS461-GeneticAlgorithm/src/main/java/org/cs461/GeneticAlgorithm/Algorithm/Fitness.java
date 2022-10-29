@@ -10,7 +10,6 @@ import org.cs461.GeneticAlgorithm.Enums.Professor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Fitness {
     private ArrayList<Course> courses;
@@ -113,6 +112,7 @@ public class Fitness {
             }
         }
 
+        // assigning deduction/bonus based on how many courses professor is scheduled for
         for (Map.Entry<Professor, Time> schedule : professorSchedule.entrySet()) {
             Integer classesTaught = 0;
 
@@ -191,7 +191,7 @@ public class Fitness {
         }
 
 
-        // assigning bonus if section of 101 and 191 are in consecutive time slots, but deducting if they're in Katz or Bloch
+        // assigning bonus if section of 101a and 191a are in consecutive time slots, but deducting if they're in Katz or Bloch
         if (Math.abs(cs101aTime - cs191aTime) == 1) {
             if ((cs101aBuilding == Building.Bloch && cs191aBuilding == Building.Katz) || (cs101aBuilding == Building.Katz && cs191aBuilding == Building.Bloch)) {
                 score -= 0.4;
@@ -207,6 +207,7 @@ public class Fitness {
             score -= 0.25;
         }
 
+        // assigning bonus if section of 101a and 191b are in consecutive time slots, but deducting if they're in Katz or Bloch
         if (Math.abs(cs101aTime - cs191bTime) == 1) {
             if ((cs101aBuilding == Building.Bloch && cs191bBuilding == Building.Katz) || (cs101aBuilding == Building.Katz && cs191bBuilding == Building.Bloch)) {
                 score -= 0.4;
@@ -222,6 +223,7 @@ public class Fitness {
             score -= 0.25;
         }
 
+        // assigning bonus if section of 101b and 191a are in consecutive time slots, but deducting if they're in Katz or Bloch
         if (Math.abs(cs101bTime - cs191aTime) == 1) {
             if ((cs101bBuilding == Building.Bloch && cs191aBuilding == Building.Katz) || (cs101bBuilding == Building.Katz && cs191aBuilding == Building.Bloch)) {
                 score -= 0.4;
@@ -237,6 +239,7 @@ public class Fitness {
             score -= 0.25;
         }
 
+        // assigning bonus if section of 101b and 191b are in consecutive time slots, but deducting if they're in Katz or Bloch
         if (Math.abs(cs101bTime - cs191bTime) == 1) {
             if ((cs101bBuilding == Building.Bloch && cs191bBuilding == Building.Katz) || (cs101bBuilding == Building.Katz && cs191bBuilding == Building.Bloch)) {
                 score -= 0.4;
@@ -253,6 +256,7 @@ public class Fitness {
         }
 
 
+        // assigning bonus if professor has multiple consecutive classes
         for (Map.Entry<Professor, Time> schedule : professorSchedule.entrySet()) {
             Boolean previousSlot = false;
             for (Map.Entry<Integer, ArrayList<Object>> time : schedule.getValue().times.entrySet()) {

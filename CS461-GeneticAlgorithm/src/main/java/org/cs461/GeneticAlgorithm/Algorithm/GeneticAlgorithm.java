@@ -43,11 +43,16 @@ public class GeneticAlgorithm {
     public void execute() {
         setup();
 
-        for (Map.Entry<ArrayList<Course>, Double> schedule : schedulePopulation.entrySet()) {
-            schedule.setValue(fitness.calcFitness(schedule.getKey()));
+        while (generation <= 100 || (generationFitness.get(generation - 100) / generationFitness.get(generation - 1)) < 0.01) {
+            for (Map.Entry<ArrayList<Course>, Double> schedule : schedulePopulation.entrySet()) {
+                schedule.setValue(fitness.calcFitness(schedule.getKey()));
+            }
+
+            crossover();
+            System.out.println(generationFitness);
         }
 
-        crossover();
+
 
         // iterate until at least 100 generations and fitness target is met
         //     calculate fitness of each score
@@ -57,35 +62,49 @@ public class GeneticAlgorithm {
     }
 
     public void crossover() {
+        // setting up data structures to perform normalization
         Double fitnessSum = 0.0;
+        Double avgFitness = 0.0;
         Double previous = 0.0;
         LinkedHashMap<ArrayList<Course>, Double> softmax = new LinkedHashMap<>();
         LinkedHashMap<ArrayList<Course>, Double> cdf = new LinkedHashMap<>();
 
+        // sorting fitness scores and normalizing data by taking to natrual log
         schedulePopulation.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEachOrdered(schedule -> softmax.put(schedule.getKey(), Math.exp(schedule.getValue())));
 
+        // finding overall fitness of population
         for (Map.Entry<ArrayList<Course>, Double> schedule : softmax.entrySet()) {
             fitnessSum += schedule.getValue();
         }
 
+        // getting softmax value of the population and putting it in a cumulative distribution function (CDF)
         for (Map.Entry<ArrayList<Course>, Double> schedule : softmax.entrySet()) {
             cdf.put(schedule.getKey(), (schedule.getValue() / fitnessSum) + previous);
             previous += schedule.getValue() / fitnessSum;
         }
 
-        generationFitness.put(generation, fitnessSum / schedulePopulation.size());
+        // storing average fitness per generation
+        for (Map.Entry<ArrayList<Course>, Double> schedule: schedulePopulation.entrySet()) {
+            avgFitness += schedule.getValue();
+        }
+
+        generationFitness.put(generation, avgFitness / schedulePopulation.size());
         generation += 1;
 
+
+        // setting up data structures for crossover
         ArrayList<ArrayList<Course>> parents = new ArrayList<>();
         ArrayList<Course> childOne = new ArrayList<>();
         ArrayList<Course> childTwo = new ArrayList<>();
         schedulePopulation = new HashMap<>();
 
-        for (int i = 0; i < 250; i++) {
+        // generating new generation based on most fit candidates
+        while (schedulePopulation.size() < 500) {
+            // selecting two parents that fall in a certain range of our CDF
             for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
-                Double percentile = rand.nextDouble(0, 1);
+                Double percentile = rand.nextDouble(0.5, 1.0);
 
-                if (schedule.getValue() > percentile) {
+                if (schedule.getValue() >= percentile) {
                     parents.add(schedule.getKey());
                 }
 
@@ -94,31 +113,41 @@ public class GeneticAlgorithm {
                 }
             }
 
-            Integer split = rand.nextInt(0, 11);
+            // performing crossover of both parents attributes
+            try {
+                Integer split = rand.nextInt(0, 11);
 
-            childOne.addAll(parents.get(0).subList(0, split));
-            childOne.addAll(parents.get(1).subList(split, 11));
+                childOne.addAll(parents.get(0).subList(0, split));
+                childOne.addAll(parents.get(1).subList(split, 11));
 
-            childTwo.addAll(parents.get(1).subList(0, split));
-            childTwo.addAll(parents.get(0).subList(split, 11));
+                childTwo.addAll(parents.get(1).subList(0, split));
+                childTwo.addAll(parents.get(0).subList(split, 11));
 
-            schedulePopulation.put(mutate(childOne), 0.0);
-            schedulePopulation.put(mutate(childTwo), 0.0);
+                // adding children back into population with chance of mutation
+                schedulePopulation.put(mutate(childOne), 0.0);
+                schedulePopulation.put(mutate(childTwo), 0.0);
+            }
+            catch (Exception e) {
+                System.out.println("beans");
+            }
 
-            parents.clear();
-            childOne.clear();
-            childTwo.clear();
+
+            // resetting data structures for next selection
+            parents = new ArrayList<>();
+            childOne = new ArrayList<>();
+            childTwo = new ArrayList<>();
         }
-
-        // reset any data structures?
     }
 
     public ArrayList<Course> mutate(ArrayList<Course> child) {
-        if (rand.nextInt(1, 100) == 1) {
+        // randomly mutating child if a certain probability is met
+        if (rand.nextInt(1, 10000) == 1) {
+            // randomly picking which course in the schedule to mutate
             Integer index = rand.nextInt(0, 11);
             ArrayList<Integer> times = new ArrayList<>();
             times.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
 
+            // creating new random course
             ClassName className = child.get(index).courseName;
             Professor professor = professorMasterList.get(rand.nextInt(professorMasterList.size()));
             Integer time = times.get(rand.nextInt(times.size()));
@@ -129,7 +158,7 @@ public class GeneticAlgorithm {
             Integer roomNumber = roomMasterList.get(buildingSeed).roomNumber;
             Integer roomSize = roomMasterList.get(buildingSeed).roomSize;
 
-
+            // replacing the course in place of existing dataset
             child.set(index, new Course(className, professor, building, roomNumber, roomSize, time, expectedEnrollment));
         }
 
