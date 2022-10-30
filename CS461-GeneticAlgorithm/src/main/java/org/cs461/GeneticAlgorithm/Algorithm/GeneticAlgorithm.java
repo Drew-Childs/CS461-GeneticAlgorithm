@@ -7,6 +7,7 @@ import org.cs461.GeneticAlgorithm.Enums.Building;
 import org.cs461.GeneticAlgorithm.Enums.ClassName;
 import org.cs461.GeneticAlgorithm.Enums.Professor;
 
+import java.io.*;
 import java.util.*;
 
 public class GeneticAlgorithm {
@@ -40,7 +41,7 @@ public class GeneticAlgorithm {
     }
 
 
-    public void execute() {
+    public void execute() throws IOException {
         setup();
 
         while (generation <= 100 || (generationFitness.get(generation - 100) / generationFitness.get(generation - 1)) < 0.01) {
@@ -49,16 +50,38 @@ public class GeneticAlgorithm {
             }
 
             crossover();
-            System.out.println(generationFitness);
         }
 
+        // gathering the most optimal schedule from analysis
+        ArrayList<Course> bestSchedule = new ArrayList<>();
+        Double bestFitness = 0.0;
 
+        for (Map.Entry<ArrayList<Course>, Double> schedule : schedulePopulation.entrySet()) {
+            schedule.setValue(fitness.calcFitness(schedule.getKey()));
+            if (bestFitness == 0.0 || schedule.getValue() > bestFitness) {
+                bestSchedule.clear();
+                bestSchedule = schedule.getKey();
+                bestFitness = schedule.getValue();
+            }
+        }
 
-        // iterate until at least 100 generations and fitness target is met
-        //     calculate fitness of each score
-        //     perform crossover
+        // outputting results to console and file
+        FileWriter file = new FileWriter("geneticAlgorithmOutput.txt");
 
-        // print/return final results
+        System.out.println("Complete!\n");
+        System.out.println("Best schedule found with fitness of: " + bestFitness);
+
+        file.write("Best schedule found with fitness of: " + bestFitness + "\n");
+        file.write("Best schedule is as follows:\n----------------------------\n");
+
+        for (Course course : bestSchedule) {
+            file.write(course.courseName + "\n");
+            file.write("\tTime: " + course.time + "\n");
+            file.write("\tRoom: " + course.room.bulding + " " + course.room.roomNumber + "\n");
+            file.write("\tProfessor: " + course.instructor + "\n\n");
+        }
+
+        file.close();
     }
 
     public void crossover() {
@@ -100,36 +123,40 @@ public class GeneticAlgorithm {
 
         // generating new generation based on most fit candidates
         while (schedulePopulation.size() < 500) {
-            Double percentile = rand.nextDouble(0.0, 1.0);
+            Double percentileOne = rand.nextDouble(0.0, 1.0);
+            Double percentileTwo = rand.nextDouble(0.0, 1.0);
 
             // selecting two parents that fall in a certain range of our CDF
             for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
-                if (schedule.getValue() >= percentile) {
+                if (schedule.getValue() >= percentileOne) {
                     parents.add(schedule.getKey());
+                    break;
                 }
+            }
 
-                if (parents.size() == 2) {
+            for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
+                if (schedule.getValue() >= percentileTwo) {
+                    parents.add(schedule.getKey());
                     break;
                 }
             }
 
             // performing crossover of both parents attributes
-            try {
-                Integer split = rand.nextInt(0, 11);
+            Integer split = rand.nextInt(0, 11);
 
-                childOne.addAll(parents.get(0).subList(0, split));
-                childOne.addAll(parents.get(1).subList(split, 11));
-
-                childTwo.addAll(parents.get(1).subList(0, split));
-                childTwo.addAll(parents.get(0).subList(split, 11));
-
-                // adding children back into population with chance of mutation
-                schedulePopulation.put(mutate(childOne), 0.0);
-                schedulePopulation.put(mutate(childTwo), 0.0);
+            for (int i = 0; i < split; i++) {
+                childOne.add(parents.get(0).get(i));
+                childTwo.add(parents.get(1).get(i));
             }
-            catch (Exception e) {
-                continue;
+
+            for (int i = split; i < 11; i++) {
+                childOne.add(parents.get(1).get(i));
+                childTwo.add(parents.get(0).get(i));
             }
+
+            // adding children back into population with chance of mutation
+            schedulePopulation.put(mutate(childOne), 0.0);
+            schedulePopulation.put(mutate(childTwo), 0.0);
 
 
             // resetting data structures for next selection

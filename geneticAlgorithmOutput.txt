@@ -1,0 +1,58 @@
+Best schedule found with fitness of: 15.6
+Best schedule is as follows:
+----------------------------
+CS101A
+	Time: 6
+	Room: Haag 201
+	Professor: Gharibi
+
+CS101B
+	Time: 4
+	Room: Royall 201
+	Professor: Gharibi
+
+CS191A
+	Time: 5
+	Room: Bloch 119
+	Professor: Gharibi
+
+CS191B
+	Time: 3
+	Room: Haag 301
+	Professor: Zein_el_Din
+
+CS201
+	Time: 5
+	Room: Royall 206
+	Professor: Xu
+
+CS291
+	Time: 2
+	Room: Royall 201
+	Professor: Zein_el_Din
+
+CS303
+	Time: 4
+	Room: Haag 201
+	Professor: Zein_el_Din
+
+CS304
+	Time: 4
+	Room: Bloch 119
+	Professor: Xu
+
+CS394
+	Time: 3
+	Room: Haag 201
+	Professor: Xu
+
+CS449
+	Time: 6
+	Room: FH 310
+	Professor: Xu
+
+CS451
+	Time: 5
+	Room: FH 310
+	Professor: Zein_el_Din
+
