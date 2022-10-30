@@ -76,7 +76,7 @@ public class GeneticAlgorithm {
 
         for (Course course : bestSchedule) {
             file.write(course.courseName + "\n");
-            file.write("\tTime: " + course.time + "\n");
+            file.write("\tTime: " + (course.time + 9 > 12 ? course.time - 3 : course.time + 9) + "\n");
             file.write("\tRoom: " + course.room.bulding + " " + course.room.roomNumber + "\n");
             file.write("\tProfessor: " + course.instructor + "\n\n");
         }
