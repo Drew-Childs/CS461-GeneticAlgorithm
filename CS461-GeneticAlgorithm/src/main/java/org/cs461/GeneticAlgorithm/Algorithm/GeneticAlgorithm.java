@@ -100,10 +100,10 @@ public class GeneticAlgorithm {
 
         // generating new generation based on most fit candidates
         while (schedulePopulation.size() < 500) {
+            Double percentile = rand.nextDouble(0.0, 1.0);
+
             // selecting two parents that fall in a certain range of our CDF
             for (Map.Entry<ArrayList<Course>, Double> schedule : cdf.entrySet()) {
-                Double percentile = rand.nextDouble(0.5, 1.0);
-
                 if (schedule.getValue() >= percentile) {
                     parents.add(schedule.getKey());
                 }
@@ -128,7 +128,7 @@ public class GeneticAlgorithm {
                 schedulePopulation.put(mutate(childTwo), 0.0);
             }
             catch (Exception e) {
-                System.out.println("beans");
+                continue;
             }
 
 
